@@ -30,7 +30,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { ITeamName } from "../pages";
+import { ITeamName, IVotedBy } from "../pages";
 
 import { auth, db } from "../utils/firebase";
 
@@ -86,14 +86,56 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     await addDoc(collection(db, "team_names"), {
       name: teamName,
       votes: 1,
-      voted_by: currentUser?.email,
+      voted_by: [{ email: currentUser?.email, vote: 1 }],
       createdBy: currentUser?.email,
     });
   };
 
   const upVote = async (teamName: ITeamName) => {
     const teamNameRef = doc(db, "team_names", teamName.id);
+    let upOrDown = "";
+    let alreadyVoted = false;
     console.log(teamName);
+    teamName.voted_by.forEach((t) => {
+      if (t.email === currentUser?.email!) {
+        alreadyVoted = true;
+        if (t.vote === 1) {
+          upOrDown = "up";
+        } else {
+          upOrDown = "down";
+        }
+        return;
+      }
+    });
+
+    if (alreadyVoted) {
+      if (upOrDown === "up") {
+        console.log("already up voted");
+      } else {
+        console.log("down voted");
+        teamName.voted_by.map((t) => {
+          if (t.email === currentUser?.email!) {
+            t.vote = 1;
+          }
+        });
+        console.log(teamName.voted_by);
+        await updateDoc(teamNameRef, {
+          ...teamName,
+          voted_by: [...teamName.voted_by],
+          votes: teamName.votes + 1,
+        });
+      }
+    } else {
+      teamName.voted_by.push({
+        email: currentUser?.email!,
+        vote: 1,
+      } as IVotedBy);
+      await updateDoc(teamNameRef, {
+        ...teamName,
+        voted_by: teamName.voted_by,
+        votes: teamName.votes + 1,
+      });
+    }
   };
 
   const downVote = async (teamName: ITeamName) => {};
