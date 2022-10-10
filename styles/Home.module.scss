@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 32px;
+}
+
+.teamNames {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  .teamName {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid gray;
+    border-radius: 5px;
+
+    .name {
+      font-weight: bold;
+    }
+
+    .votes {
+      display: flex;
+      flex-direction: column;
+      .number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .up,
+      .down {
+        cursor: pointer;
+        height: 20px;
+        width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #363636;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .newTeamName {
+    display: flex;
+    input {
+      background: #363636;
+      color: white;
+      border: none;
+      padding: 8px;
+      width: 100%;
+      margin-right: -5px;
+      outline: none;
+    }
+
+    button {
+    }
+  }
+}
