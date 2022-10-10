@@ -99,10 +99,11 @@ const Home: NextPage = () => {
               newTeamNameRef.current.value = "";
             }}
           >
-            Add teamName
+            Add newTeamName
           </button>
         </div>
       </div>
+      <button onClick={logout}>logout</button>
     </div>
   );
 };
