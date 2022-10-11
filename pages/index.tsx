@@ -71,14 +71,13 @@ const Home: NextPage = () => {
       ) : (
         <div className={styles.teamNames}>
           {teamNames.map((teamName, id) => (
-            <div className={styles.teamWrapper}>
+            <div className={styles.teamWrapper} key={id}>
               <TeamName
                 getNames={getNames}
                 getPercentage={getPercentage}
                 teamName={teamName}
                 isSelected={isSelected}
                 toggleSelection={toggleSelection}
-                key={id}
               />
               <button
                 className={styles.delete}
