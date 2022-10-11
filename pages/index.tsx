@@ -4,18 +4,15 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/Home.module.scss";
+import { MdOutlinePlaylistAdd } from "react-icons/md";
+import { TeamName } from "../components/TeamName";
 
 export interface ITeamName {
   id: string;
   name: string;
   votes: number;
-  voted_by: IVotedBy[];
+  voted_by: string[];
   createdBy: string;
-}
-
-export interface IVotedBy {
-  email: string;
-  vote: number;
 }
 
 const Home: NextPage = () => {
@@ -25,16 +22,35 @@ const Home: NextPage = () => {
     addTeamName,
     currentUser,
     deleteTeamName,
-    upVote,
-    downVote,
+    toggleSelection,
   } = useAuth();
   const [teamNames, setTeamNames] = useState<ITeamName[]>([]);
   const newTeamNameRef = useRef<HTMLInputElement | null>(null);
+  const zero = 0;
+
+  const total =
+    teamNames.length > 0
+      ? teamNames.reduce((acc, teamName) => acc + teamName.votes, zero)
+      : 0;
 
   const getNames = async () => {
     const names: ITeamName[] = await getTeamNames();
 
     setTeamNames(names);
+  };
+
+  const isSelected = (teamName: ITeamName) => {
+    for (let email of teamName.voted_by) {
+      if (email === currentUser?.email!) return true;
+    }
+
+    return false;
+  };
+
+  const getPercentage = (amount: number) => {
+    if (amount === 0) return 0;
+
+    return ((amount / total) * 100).toFixed(0);
   };
 
   useEffect(() => {
@@ -49,61 +65,43 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className={styles.teamNames}>
-        {teamNames.map((teamName, id) => (
-          <div className={styles.teamName} key={id}>
-            {currentUser.email === teamName.createdBy && (
-              <button
-                className="button is-danger"
-                onClick={() => {
-                  deleteTeamName(teamName);
-                  getNames();
-                }}
-              >
-                X
-              </button>
-            )}
-
-            <div className={styles.name}>{teamName.name}</div>
-            <div className={styles.votes}>
-              <div
-                className={styles.up}
-                onClick={() => {
-                  upVote(teamName);
-                  getNames();
-                }}
-              >
-                ^
-              </div>
-              <div className={styles.number}>{teamName.votes}</div>
-              <div
-                className={styles.down}
-                onClick={() => {
-                  downVote(teamName);
-                  getNames();
-                }}
-              >
-                v
-              </div>
-            </div>
+      {!currentUser ? (
+        <div>Loading...</div>
+      ) : (
+        <div className={styles.teamNames}>
+          {teamNames.map((teamName, id) => (
+            <TeamName
+              getNames={getNames}
+              getPercentage={getPercentage}
+              teamName={teamName}
+              isSelected={isSelected}
+              toggleSelection={toggleSelection}
+            />
+          ))}
+          <div className={styles.newTeamName}>
+            <input
+              type="text"
+              placeholder="new team name"
+              ref={newTeamNameRef}
+            />
+            <button
+              className={styles.newButton}
+              onClick={() => {
+                if (!newTeamNameRef.current?.value.length) return;
+                addTeamName(newTeamNameRef.current?.value);
+                getNames();
+                newTeamNameRef.current.value = "";
+              }}
+            >
+              <MdOutlinePlaylistAdd />
+            </button>
           </div>
-        ))}
-        <div className={styles.newTeamName}>
-          <input type="text" placeholder="team name" ref={newTeamNameRef} />
-          <button
-            className="button is-dark"
-            onClick={() => {
-              if (!newTeamNameRef.current?.value.length) return;
-              addTeamName(newTeamNameRef.current?.value);
-              getNames();
-              newTeamNameRef.current.value = "";
-            }}
-          >
-            Add newTeamName
-          </button>
         </div>
-      </div>
-      <button onClick={logout}>logout</button>
+      )}
+
+      <button onClick={logout} className="button is-warning mt-5">
+        logout
+      </button>
     </div>
   );
 };

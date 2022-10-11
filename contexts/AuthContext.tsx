@@ -30,7 +30,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { ITeamName, IVotedBy } from "../pages";
+import { ITeamName } from "../pages";
 
 import { auth, db } from "../utils/firebase";
 
@@ -86,61 +86,42 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     await addDoc(collection(db, "team_names"), {
       name: teamName,
       votes: 1,
-      voted_by: [{ email: currentUser?.email, vote: 1 }],
+      voted_by: [currentUser?.email],
       createdBy: currentUser?.email,
     });
   };
 
-  const upVote = async (teamName: ITeamName) => {
-    const teamNameRef = doc(db, "team_names", teamName.id);
-    let upOrDown = "";
-    let alreadyVoted = false;
-    console.log(teamName);
-    teamName.voted_by.forEach((t) => {
-      if (t.email === currentUser?.email!) {
-        alreadyVoted = true;
-        if (t.vote === 1) {
-          upOrDown = "up";
-        } else {
-          upOrDown = "down";
-        }
-        return;
-      }
-    });
+  const isSelected = (teamName: ITeamName): boolean => {
+    for (let email of teamName.voted_by) {
+      if (email === currentUser?.email!) return true;
+    }
+    return false;
+  };
 
-    if (alreadyVoted) {
-      if (upOrDown === "up") {
-        console.log("already up voted");
-      } else {
-        console.log("down voted");
-        teamName.voted_by.map((t) => {
-          if (t.email === currentUser?.email!) {
-            t.vote = 1;
-          }
-        });
-        console.log(teamName.voted_by);
-        await updateDoc(teamNameRef, {
-          ...teamName,
-          voted_by: [...teamName.voted_by],
-          votes: teamName.votes + 1,
-        });
-      }
-    } else {
-      teamName.voted_by.push({
-        email: currentUser?.email!,
-        vote: 1,
-      } as IVotedBy);
+  const toggleSelection = async (teamName: ITeamName) => {
+    const teamNameRef = doc(db, "team_names", teamName.id);
+
+    if (isSelected(teamName)) {
+      console.log("already selected");
       await updateDoc(teamNameRef, {
         ...teamName,
-        voted_by: teamName.voted_by,
+        voted_by: teamName.voted_by.filter(
+          (email) => email !== currentUser?.email
+        ),
+        votes: teamName.votes - 1,
+      });
+    } else {
+      console.log("not selected");
+      await updateDoc(teamNameRef, {
+        ...teamName,
+        voted_by: [...teamName.voted_by, currentUser?.email],
         votes: teamName.votes + 1,
       });
     }
   };
 
-  const downVote = async (teamName: ITeamName) => {};
-
   useEffect(() => {
+    setLoading(true);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
 
@@ -164,8 +145,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     logout,
     getTeamNames,
     addTeamName,
-    upVote,
-    downVote,
+    toggleSelection,
     deleteTeamName,
   };
 
