@@ -24,6 +24,7 @@ export const Container = styled.div<Props>`
     top: 0;
     left: 0;
     z-index: -1;
+    transition: all 0.3s ease-in-out;
 
     background: #022;
   }
