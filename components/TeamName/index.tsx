@@ -23,7 +23,6 @@ export const TeamName = ({
     <Container
       percentage={+getPercentage(teamName.votes)}
       className={`styles.teamName ${isSelected(teamName) && "selected"}`}
-      key={teamName.id}
       onClick={() => {
         toggleSelection(teamName);
         setTimeout(() => {

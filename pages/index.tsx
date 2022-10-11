@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/Home.module.scss";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
@@ -33,11 +33,11 @@ const Home: NextPage = () => {
       ? teamNames.reduce((acc, teamName) => acc + teamName.votes, zero)
       : 0;
 
-  const getNames = async () => {
+  const getNames = useCallback(async () => {
     const names: ITeamName[] = await getTeamNames();
 
     setTeamNames(names);
-  };
+  }, [getTeamNames]);
 
   const isSelected = (teamName: ITeamName) => {
     for (let email of teamName.voted_by) {
@@ -55,7 +55,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     getNames();
-  }, []);
+  }, [getNames]);
 
   return (
     <div className={styles.container}>
@@ -76,6 +76,7 @@ const Home: NextPage = () => {
               teamName={teamName}
               isSelected={isSelected}
               toggleSelection={toggleSelection}
+              key={id}
             />
           ))}
           <div className={styles.newTeamName}>
