@@ -11,6 +11,27 @@
   flex-direction: column;
   gap: 16px;
   user-select: none;
+  width: 100%;
+  max-width: 500px;
+
+  .teamWrapper {
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  .delete {
+    background: transparent;
+    color: white;
+    height: 85px;
+    width: 60px;
+    transition: all 0.2s linear;
+
+    &:hover {
+      background: rgb(48, 0, 0);
+      cursor: pointer;
+    }
+  }
 
   .newTeamName {
     border: 1px solid #333;

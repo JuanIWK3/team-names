@@ -10,6 +10,7 @@ export const Container = styled.div<Props>`
   padding: 16px;
   position: relative;
   z-index: 0;
+  width: 100%;
 
   &.selected {
     border: 1px solid lightblue;

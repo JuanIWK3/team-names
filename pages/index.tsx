@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/Home.module.scss";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
+import { RiDeleteBack2Line } from "react-icons/ri";
 import { TeamName } from "../components/TeamName";
 
 export interface ITeamName {
@@ -70,14 +71,25 @@ const Home: NextPage = () => {
       ) : (
         <div className={styles.teamNames}>
           {teamNames.map((teamName, id) => (
-            <TeamName
-              getNames={getNames}
-              getPercentage={getPercentage}
-              teamName={teamName}
-              isSelected={isSelected}
-              toggleSelection={toggleSelection}
-              key={id}
-            />
+            <div className={styles.teamWrapper}>
+              <TeamName
+                getNames={getNames}
+                getPercentage={getPercentage}
+                teamName={teamName}
+                isSelected={isSelected}
+                toggleSelection={toggleSelection}
+                key={id}
+              />
+              <button
+                className={styles.delete}
+                onClick={() => {
+                  deleteTeamName(teamName);
+                  getNames();
+                }}
+              >
+                <RiDeleteBack2Line />
+              </button>
+            </div>
           ))}
           <div className={styles.newTeamName}>
             <input
