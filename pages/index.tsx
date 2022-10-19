@@ -79,15 +79,17 @@ const Home: NextPage = () => {
                 isSelected={isSelected}
                 toggleSelection={toggleSelection}
               />
-              <button
-                className={styles.delete}
-                onClick={() => {
-                  deleteTeamName(teamName);
-                  getNames();
-                }}
-              >
-                <RiDeleteBack2Line />
-              </button>
+              {teamName.createdBy === currentUser?.email && (
+                <button
+                  className={styles.delete}
+                  onClick={() => {
+                    deleteTeamName(teamName);
+                    getNames();
+                  }}
+                >
+                  <RiDeleteBack2Line size={20} />
+                </button>
+              )}
             </div>
           ))}
           <div className={styles.newTeamName}>
@@ -95,6 +97,14 @@ const Home: NextPage = () => {
               type="text"
               placeholder="new team name"
               ref={newTeamNameRef}
+              onKeyDown={(e) => {
+                if (e.code === "Enter") {
+                  if (!newTeamNameRef.current?.value.length) return;
+                  addTeamName(newTeamNameRef.current?.value);
+                  getNames();
+                  newTeamNameRef.current.value = "";
+                }
+              }}
             />
             <button
               className={styles.newButton}

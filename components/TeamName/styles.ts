@@ -5,15 +5,20 @@ interface Props {
 }
 
 export const Container = styled.div<Props>`
-  border: 1px solid #333;
+  border: 1px solid #eee;
   cursor: pointer;
   padding: 16px;
   position: relative;
   z-index: 0;
   width: 100%;
+  color: #333;
 
   &.selected {
     border: 1px solid lightblue;
+
+    &:after {
+      background: #00ffff;
+    }
   }
 
   &::after {
@@ -27,6 +32,6 @@ export const Container = styled.div<Props>`
     z-index: -1;
     transition: all 0.3s ease-in-out;
 
-    background: #022;
+    background: #ddd;
   }
 `;

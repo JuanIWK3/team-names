@@ -18,17 +18,22 @@
     display: flex;
     width: 100%;
     align-items: center;
+    position: relative;
   }
 
   .delete {
     background: transparent;
-    color: white;
-    height: 85px;
-    width: 60px;
+    color: red;
+    height: 90%;
+    width: 50px;
+    margin-right: 3px;
     transition: all 0.2s linear;
+    position: absolute;
+    right: 0;
+    border: none;
 
     &:hover {
-      background: rgb(48, 0, 0);
+      background: rgba(255, 0, 0, 0.233);
       cursor: pointer;
     }
   }
@@ -43,7 +48,7 @@
       padding: 16px;
       border: none;
 
-      color: white;
+      color: black;
 
       &::placeholder {
         font-style: italic;
